@@ -1,0 +1,75 @@
+#container {
+    text-align: center;
+  
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  #container strong {
+    font-size: 20px;
+    line-height: 26px;
+  }
+  
+  #container p {
+    font-size: 16px;
+    line-height: 22px;
+  
+    color: #8c8c8c;
+  
+    margin: 0;
+  }
+  
+  #container a {
+    text-decoration: none;
+  }
+
+.auth-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    height: 100%;
+    padding: 20px;
+  }
+  
+  .auth-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+  }
+
+  .header-content {
+    padding: 160px 0px 140px;
+
+    position: relative;
+  }
+
+  .header-content h1 {
+    font-size: 2.5rem;
+  }
+
+  
+  .header-content p {
+    font-style: italic;
+    font-size: 16px;
+    font-weight: 400;
+    color: #8c8c8c;
+    text-align: right;
+    margin-top: -5px;
+    margin-right: 5px;
+    color: mediumaquamarine;
+    font-size: 1.3rem;
+  }
+
+ /* styles.css o en el archivo correspondiente */
+.custom-button {
+  --background: black; /* Color de fondo */
+  --border-radius: 6px;
+  --background-activated: mediumturquoise;
+  --color-activated: black;
+  padding: 10px;
+  
+}

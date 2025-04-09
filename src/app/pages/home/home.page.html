@@ -1,20 +1,52 @@
 <ion-header [translucent]="true">
+
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title>VoiceApp</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <div class="container">
+
+    <div class="hello">
+      <h2>Hey</h2>
+      <h1>{{ name }}!</h1>
+      <p>Con esta app puedes escuchar todos tus textos</p>
+    </div>
+
+
+
+    <div class="content">
+      <ion-item lines="none">
+        <ion-textarea
+          [(ngModel)]="textToRead" auto-grow="true"
+          placeholder="Escribe o pega tu texto aquí..."
+          rows="6"
+          auto-grow="true"
+          class="custom-textarea"
+        ></ion-textarea>
+      </ion-item>
+    </div>
+
+    <div>
+      <ion-button
+        expand="block"
+        class="button-escuchar"
+        (click)="speak()">
+          Escuchar
+      </ion-button>
+      <ion-button
+        fill="clear"
+        expand="block"
+        class="button-logout"
+        (click)="logout()">
+          Cerrar sesión
+      </ion-button>
+    </div>
+
   </div>
+
+
+
 </ion-content>
