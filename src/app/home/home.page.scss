@@ -26,6 +26,14 @@
   text-decoration: none;
 }
 
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  height: 100%;
+  padding: 20px;
+}
 
 .header-content {
   padding: 160px 0px 140px;
@@ -37,7 +45,6 @@
   font-size: 2.5rem;
 }
 
-
 .header-content p {
   font-style: italic;
   font-size: 16px;
@@ -48,4 +55,14 @@
   margin-right: 5px;
   color: mediumaquamarine;
   font-size: 1.3rem;
+}
+
+ /* styles.css o en el archivo correspondiente */
+.custom-button {
+  --background: black; /* Color de fondo */
+  --border-radius: 6px;
+  --background-activated: mediumturquoise;
+  --color-activated: black;
+  padding: 10px;
+  
 }
