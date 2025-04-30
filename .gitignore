@@ -4,6 +4,7 @@
 # Ignorar todos los entornos
 src/environments/
 
+
 *~
 *.sw[mnpcod]
 .tmp
