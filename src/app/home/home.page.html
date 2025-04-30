@@ -1,15 +1,75 @@
 <ion-content [fullscreen]="true">
-  
-  <!-- Contenedor para los botones de autenticación -->
-  <div class="auth-buttons">
+
+  <!-- Contenedor principal -->
+  <div class="home">
 
     <!-- Título de la app -->
     <div class="header-content">
       <h1>MusicApp!</h1>
       <p>byAxel</p>
     </div>
-    
 
-    
+    <!-- Tarjeta con información de la canción reconocida -->
+    <ion-card *ngIf="recognizedMusic" class="card">
+
+      <!-- Imagen del álbum -->
+      <div class="image-container">
+        <img [src]="recognizedMusic.albumCoverUrl"
+          alt="Portada del álbum" class="album-cover" />
+      </div>
+
+      <!-- Título y artista -->
+      <ion-card-header>
+        <ion-card-title>{{ recognizedMusic.title }}</ion-card-title>
+        <ion-card-subtitle>{{ recognizedMusic.artist }}</ion-card-subtitle>
+      </ion-card-header>
+
+      <!-- Botones de plataformas -->
+      <ion-card-content>
+        <div class="button-container">
+
+          <!-- Spotify -->
+          <a [href]="'https://open.spotify.com/track/' + recognizedMusic.spotifyTrackId" target="_blank">
+            <ion-button [disabled]="!recognizedMusic.spotifyTrackId" class="platform-button"
+                        [ngClass]="{'disabled': !recognizedMusic.spotifyTrackId}">
+              <img src="assets/icon/spotify_icon.svg" alt="Spotify" />
+            </ion-button>
+          </a>
+
+          <!-- Youtube -->
+          <a [href]="recognizedMusic.youtubeVideoLink" target="_blank">
+            <ion-button [disabled]="!recognizedMusic.youtubeVideoLink" class="platform-button"
+                        [ngClass]="{'disabled': !recognizedMusic.youtubeVideoLink}">
+              <img src="assets/icon/youtube_icon.svg" alt="YouTube" />
+            </ion-button>
+          </a>
+          
+          <!-- Botón de Deezer -->
+          <a [href]="'https://www.deezer.com/track/' + recognizedMusic.deezerId" target="_blank">
+            <ion-button [disabled]="!recognizedMusic.deezerId" class="platform-button"
+                        [ngClass]="{'disabled': !recognizedMusic.deezerId}">
+              <img src="assets/icon/deezer_icon.svg" alt="Deezer" />
+            </ion-button>
+          </a>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Botón o spinner de escucha -->
+    <div class="spinner-button-container">
+
+      <!-- Spinner -->
+      <div *ngIf="isListening" class="spinner-container">
+        <ion-spinner  name="crescent" class="custom-spinner"></ion-spinner>
+      <p>Escuchando...</p>
+      </div>
+      
+      <!-- Botón de escucha -->
+      <ion-button *ngIf="!isListening" (click)="recognizeSong()" class="custom-button">
+        {{ isListening ? 'Escuchando...' : 'Escuchar'}}
+      </ion-button>
+      
+    </div>
+
   </div>
 </ion-content>

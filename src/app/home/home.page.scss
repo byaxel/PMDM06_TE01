@@ -1,43 +1,15 @@
-#container {
-  text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
-}
-
+/* === ESTRUCTURA GENERAL === */
 .home {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: start;
   height: 100%;
-  padding: 20px;
+  padding: 10px;
 }
 
 .header-content {
-  padding: 160px 0px 140px;
-
+  padding: 80px 0px 50px;
   position: relative;
 }
 
@@ -57,12 +29,89 @@
   font-size: 1.3rem;
 }
 
- /* styles.css o en el archivo correspondiente */
+/* === TARJETA DE RESULTADOS === */
+.card {
+  margin-bottom: 50px;
+  overflow: hidden;
+}
+
+/* === CONTENEDOR DE IMAGEN === */
+.image-container {
+  height: 200px;
+  overflow: hidden;
+}
+
+.album-cover {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.image-container img {
+  width: 120%;
+  height: auto;
+  object-fit: cover;
+  transform: translateY(-20%); 
+}
+
+/* === BOTONES DE PLATAFORMAS === */
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.platform-button {
+  --background: transparent;
+  --border-radius: 50%;
+  --box-shadow: none;
+  --padding-top: 0px;
+  --padding-bottom: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding: 0;
+}
+
+.platform-button img {
+  width: 38px;
+  height: 38px;
+}
+
+ion-button[disabled] {
+  opacity: 0.3;
+}
+
+/* === BOTÓN PERSONALIZADO (Escuchar) === */
 .custom-button {
-  --background: black; /* Color de fondo */
+  --background: black;
   --border-radius: 6px;
   --background-activated: mediumturquoise;
   --color-activated: black;
   padding: 10px;
-  
+}
+
+/* === SPINNER / BOTÓN DE ESCUCHA === */
+.spinner-button-container {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  text-align: center;
+}
+
+.spinner-container {       
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  text-align: center;
+  color: var(--ion-color-primary);
+}
+
+.spinner-container p {
+  color: mediumaquamarine;
 }

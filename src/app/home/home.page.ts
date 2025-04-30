@@ -1,71 +1,113 @@
 import { Component } from '@angular/core';
 import { MusicRecognitionService } from '../services/music-recognition.service';
+import { SimpleMusicData } from '../interfaces/simple-music-data';
+import { VoiceRecorder } from 'capacitor-voice-recorder';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
-  standalone: false,
+  standalone: false
 })
 export class HomePage {
 
-  recognizedMusic: any;
-  isRecording = false;
+  // Variable para almacenar la música reconocida
+  recognizedMusic: SimpleMusicData | null = null;
+  
 
-  constructor(private musicService: MusicRecognitionService) {}
+  // Variable para manejar el estado de grabación
+  isListening = false;
 
+  // Nuestro servicio de reconocmiento de música
+  constructor(
+    private musicService: MusicRecognitionService,
+    private toastService: ToastService
+  ) {}
+
+  // Método principal para reconocer la canción
   async recognizeSong() {
-    try {
-      const audioBlob = await this.captureAudio();
-      const base64Audio = await this.blobToBase64(audioBlob);
 
-      // Enviar audio base 64 a la API
-      this.recognizedMusic = await this.musicService.recognizeMusic(base64Audio);
+    // Indica que empieza escuchar
+    this.isListening = true;
+
+    // Limpiamos la canción reconocida anterior
+    this.recognizedMusic = null;
+
+    try {
+      // Capturamos el audio desde el micrófono
+      const audioBase64 = await this.captureAudio();
+      console.log('Audio capturado. Enviando a la API...');
+
+      // Enviamos el audio a la API para su reconocimiento
+      this.musicService.recognizeMusic(audioBase64).subscribe({
+        next: (result) => {
+          // Cuando recibimos la respuesta, la asignamos a recognizedMusic
+          this.recognizedMusic = result;
+
+          // Mostramos los resultados en consola
+          if (this.recognizedMusic) {
+            console.log('Canción reconocida:', JSON.stringify(this.recognizedMusic));
+            
+          } else {
+            console.warn('No se reconoció ninguna canción.');
+            this.toastService.showToast('No se reconoció ninguna canción.', 'alert');
+          }
+          this.isListening = false;
+        },
+        error: (error) => {
+          // Manejo de errores en la llamada a la API
+          console.error('Error al reconocer la canción:', error.message || error);
+          this.isListening = false;
+        }
+      });
 
     } catch (error) {
-      console.error('Error al reconocer la canción', error);
+      // Manejamos cualquier error que ocurra al intentar capturar o reconocer la canción
+      if (error instanceof Error) {
+        console.error('Error al reconocer la canción:', error.message);
+      } else {
+        console.error('Error al reconocer la canción (sin Error):', JSON.stringify(error));
+      }
     }
   }
 
-  // Captura audio del micrófono durante 5 segundos
-  async captureAudio(): Promise<Blob> {
-    this.isRecording = true;
+  // Método para capturar audio del micrófono durante 10 segundos
+  async captureAudio(): Promise<string> {
+    try {
+      // Verifica si la aplicación tiene permisos para grabar audio
+      const hasPermission = await VoiceRecorder.hasAudioRecordingPermission();
 
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const mediaRecorder = new MediaRecorder(stream);
-    const audioChuncks: Blob[] = [];
+      // Si no se tiene permisos, pide el permiso al usuario
+      if (!hasPermission.value) {
+        const permissionRequest = await VoiceRecorder.requestAudioRecordingPermission();
+        if (!permissionRequest) {
+          throw new Error('No se tiene permiso para grabar audio');
+        }
+      }
 
-    return new Promise((resolve, reject) => {
-      mediaRecorder.ondataavailable = event => audioChuncks.push(event.data);
+      // Inicia la grabación
+      await VoiceRecorder.startRecording();
+      console.log('Grabación iniciada.');
 
-      mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChuncks, { type: 'audio/wav' });
-        this.isRecording = false;
-        resolve(audioBlob);
-      };
+      // Espera 10 segundos para grabar
+      await new Promise(resolve => setTimeout(resolve, 10000));
 
-      mediaRecorder.start();
+      // Detiene la grabación
+      const result = (await VoiceRecorder.stopRecording()).value;
+      console.log("Grabación detenida: ", JSON.stringify(result));
 
-      // Graba durante 5 segundos y luego se detiene
-      setTimeout(() => {
-        mediaRecorder.stop();
-      }, 5000);
-    });
+      // Verifica si los datos de audio en base64 están disponibles en el resultado
+      if (!result.recordDataBase64) {
+        throw new Error('No se pudo capturar el audio en base64');
+      }
+
+      // Devuelve el audio capturado en formato Base64
+      return result.recordDataBase64;
+    } catch (error) {
+      // Si ocurre un error durante la grabación
+      console.log('Error al grabar audio: ' + error);
+      throw error;
+    }
   }
-
-  // Convierte un Blob a Base64 para enviar por HTTP
-  async blobToBase64(blob: Blob): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64data = reader.result as string;
-
-        // Elimina el encabezado "data:audio/wav;base64," si es necesario
-        resolve(base64data.split(',')[1]);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  }
-
 }
