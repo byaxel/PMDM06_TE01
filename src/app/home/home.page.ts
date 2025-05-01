@@ -14,12 +14,11 @@ export class HomePage {
 
   // Variable para almacenar la música reconocida
   recognizedMusic: SimpleMusicData | null = null;
-  
 
   // Variable para manejar el estado de grabación
   isListening = false;
 
-  // Nuestro servicio de reconocmiento de música
+  // Servicio de reconocimiento de música y Toast
   constructor(
     private musicService: MusicRecognitionService,
     private toastService: ToastService
@@ -42,33 +41,28 @@ export class HomePage {
       // Enviamos el audio a la API para su reconocimiento
       this.musicService.recognizeMusic(audioBase64).subscribe({
         next: (result) => {
+
           // Cuando recibimos la respuesta, la asignamos a recognizedMusic
           this.recognizedMusic = result;
 
-          // Mostramos los resultados en consola
-          if (this.recognizedMusic) {
-            console.log('Canción reconocida:', JSON.stringify(this.recognizedMusic));
-            
-          } else {
+          // Toast si no se encuentra ninguna canción
+          if (!this.recognizedMusic) {
             console.warn('No se reconoció ninguna canción.');
-            this.toastService.showToast('No se reconoció ninguna canción.', 'alert');
+            this.toastService.showToast('No se reconoció ninguna canción.', 'information-outline');
+          } else {
+            console.log('Canción reconocida:', JSON.stringify(this.recognizedMusic));
           }
+
+          // Termina de procesar
           this.isListening = false;
         },
         error: (error) => {
-          // Manejo de errores en la llamada a la API
-          console.error('Error al reconocer la canción:', error.message || error);
-          this.isListening = false;
+          this.handleRecognitionError(error);
         }
       });
 
     } catch (error) {
-      // Manejamos cualquier error que ocurra al intentar capturar o reconocer la canción
-      if (error instanceof Error) {
-        console.error('Error al reconocer la canción:', error.message);
-      } else {
-        console.error('Error al reconocer la canción (sin Error):', JSON.stringify(error));
-      }
+      this.handleRecognitionError(error);
     }
   }
 
@@ -104,10 +98,17 @@ export class HomePage {
 
       // Devuelve el audio capturado en formato Base64
       return result.recordDataBase64;
+
     } catch (error) {
-      // Si ocurre un error durante la grabación
-      console.log('Error al grabar audio: ' + error);
+      console.error('Error al grabar el audio: ', error);
       throw error;
     }
+  }
+
+  // Método para centralizar el manejo de errores
+  private handleRecognitionError(error: any) {
+    this.isListening = false;
+    console.error('Error al reconocer la canción: ', error);
+    this.toastService.showToast('Error al reconocer la canción.', 'alert');
   }
 }

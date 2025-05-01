@@ -11,10 +11,10 @@ export class ToastService {
   // Método para mostrar un toast
   async showToast(message: string, icon: string) {
     const toast = await this.toastController.create({
-      message: message, // El mensaje del toast
-      duration: 2000,   // Duración del toast en milisegundos
-      color: "dark",    // Color del fondo del toast
-      icon: icon,       // Icono del toast
+      message: message,
+      duration: 2000,
+      color: "dark",
+      icon: icon,
     });
     toast.present(); // Muestra el toast
   }

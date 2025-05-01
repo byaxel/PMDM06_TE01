@@ -23,6 +23,7 @@ export class MusicRecognitionService {
     access_secret: environment.acrConfig.accessSecret
   };
 
+  // Inyección del servicio para realizar solicitudes HTTP
   constructor(private http: HttpClient) { }
 
   // Método para reconocer música
@@ -77,11 +78,12 @@ export class MusicRecognitionService {
         const music = this.parseMusicData(response);
         console.log('Respuesta de la API:', response);
 
+        // Si no se encuentra el ID de Deezer, devolvemos los datos sin portada personalizada
         if (!music || !music.deezerId) {
           return of(music as SimpleMusicData);
         }
 
-        //
+        // Obtenemos la portada del álbum desde Deezer y la añadimos al objeto de música
         return this.getDeezerCoverUrl(music.deezerId).pipe(
           map(converUrl => {
             return {
@@ -111,7 +113,7 @@ export class MusicRecognitionService {
       return null;
     }
 
-    // Si se encuentra música, retornamos un objeto con los datos importantes
+    // Si se encuentra música, retornamos un objeto con los datos que nos interesan
     return {
       title: music.title,
       artist: music.artists?.[0]?.name || 'Unknown',
@@ -137,6 +139,7 @@ export class MusicRecognitionService {
         res.album?.cover ||
         'https://iili.io/HlHy9Yx.png'
       ),
+      // Si ocurre un error, devolvemos una portada genérica por defecto
       catchError(err => {
         console.error('Error al obtener la portada de Deezer:', err);
         return new Observable<string>(observer => {
@@ -153,7 +156,7 @@ export class MusicRecognitionService {
     const byteCharacters = atob(base64);
     const byteNumbers = new Array(byteCharacters.length);
   
-    // Convertimos los caracteres binarios en un array de números
+    // Recorremos cada carácter y lo convertimos a su valor numérico en ASCII
     for (let i = 0; i < byteCharacters.length; i++) {
       byteNumbers[i] = byteCharacters.charCodeAt(i);
     }
